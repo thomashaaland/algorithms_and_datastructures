@@ -1,0 +1,155 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Stack;
+import java.util.LinkedList;
+import java.util.List;
+
+class Graph {
+
+    private class Node {
+	Integer data;
+	Integer weight;
+
+	public Node(Integer i, Integer weight) {
+	    data = i;
+	    this.weight = weight;
+	}
+
+	public Node(Integer i) {
+	    data = i;
+	    weight = 1;
+	}
+	
+    }
+
+    private HashMap<Integer, ArrayList<Integer> > neighbor;
+
+    public Graph() {
+	neighbor = new HashMap<>();
+    }
+
+    public void addNode(Integer i) {
+	neighbor.put(i, new ArrayList<>());
+    }
+
+    public void addEdge(Integer from, Integer to) {
+	neighbor.get(from).add(to);
+    }
+
+    public void add2WEdge(Integer from, Integer to) {
+	addEdge(from, to);
+	addEdge(to, from);
+    }
+
+    public Set<Integer> getNodes() {
+	return neighbor.keySet();
+    }
+
+    public ArrayList<Integer> getEdges(Integer i) {
+	return neighbor.get(i);
+    }
+
+
+    // DEPTH SEARCH
+    public String depthSearch() {
+	Stack<Integer> visited = new Stack<>();
+	for (Integer node : getNodes()) {
+	    DFS(node, visited);
+	}
+	return visited.toString();
+    }
+
+    private boolean isContainedIn(Integer a, List<Integer> b) {
+	for (Integer element : b) {
+	    if (a == element) return true;
+	}
+	return false;
+    }
+    
+    private void DFS(Integer current, Stack<Integer> visited) {
+	if (!isContainedIn(current, visited))
+	    visited.push(current);
+	for (Integer edge : getEdges(current)) {
+	    if (!isContainedIn(edge, visited)) {
+		DFS(edge, visited);
+	    }
+	}
+    }
+
+    // BROAD SEARCH
+    public String breadthSearch() {
+	Stack<Integer> visited = new Stack<>();
+	LinkedList<Integer> L = new LinkedList<>();
+	Integer current;
+	L.add(6);
+	while (L.size() > 0) {
+	    current = L.removeFirst();
+	    visited.push(current);
+	    
+	    for (Integer edge : getEdges(current)) {
+		if (!isContainedIn(edge, visited) && !isContainedIn(edge, L))
+		    L.add(edge);
+	    }
+	}
+	return visited.toString();
+    }
+
+    // Topologisk Sortering
+
+    // Finds the number of edges pointing to this node
+    private Integer degIn(Integer node) {
+	Integer nCount = 0;
+	for (ArrayList<Integer> edges : neighbor.values())
+	    if (isContainedIn(node, edges)) nCount += 1;
+	return nCount;
+    }
+
+    // Topological sorting algorithm
+    public String topologicalSort() {
+
+	// Create an empty Stack
+    	Stack<Integer> S = new Stack<>();
+
+	// Create a HashMap for holding all the indegrees for all nodes.
+	HashMap<Integer, Integer> inCount = new HashMap<>();
+
+	// Create the outputlist
+	ArrayList<Integer> output = new ArrayList<>();
+	
+	// Check each node to see if any other nodes points to them.
+	// If no nodes point to them, remove them from the nodequeue and save them in S
+	for (Integer node : neighbor.keySet()) {
+	    inCount.put(node, degIn(node));
+	    if (inCount.get(node) == 0) S.push(node);
+	}
+	
+	// Do rest
+	int i = 1;
+	while (S.size() > 0) {
+	    Integer node = S.pop();
+	    output.add(node);
+	    i += 1;
+	    for (Integer edge : getEdges(node)) {
+		inCount.put(edge, inCount.get(edge) - 1);
+		if (inCount.get(edge) == 0) {
+		    S.push(edge);
+		}
+	    }
+	}
+	
+	if (i > neighbor.size()) return output.toString();
+	return "G has a cycle: " + i + " " + neighbor.size();
+    }
+
+    
+    @Override
+    public String toString() {
+	String out = ""; 
+	for (Integer node : neighbor.keySet()) {
+	    out += node + " :--> " + getEdges(node) + '\n';
+	}
+	return out;
+    }
+    
+}

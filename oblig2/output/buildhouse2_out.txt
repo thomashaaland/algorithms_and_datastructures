@@ -1,0 +1,10 @@
+**********************************************
+DETECTED A CIRCUIT: Project is not realizable!
+         Printing the circuit                 
+**********************************************
+    ID                            Taskname    Task time   Start time     End time        Staff        Slack                       OutEdges                        InEdges
+     7                    Put-carpet-floor            4            0            0            2            0                         [6, 8]                            [2]
+     6                          Make-floor            2            0            0            2            0                            [1]                            [7]
+     1                         Build-walls            4            0            0            2            0                         [2, 3]                         [5, 6]
+     2                         Build-roofs            6            0            0            4            0                      [3, 4, 7]                            [1]
+

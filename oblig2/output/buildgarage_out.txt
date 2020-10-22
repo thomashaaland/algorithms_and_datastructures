@@ -1,0 +1,91 @@
+    ID                            Taskname    Task time   Start time     End time        Staff        Slack                       OutEdges                        InEdges
+     1                       get-paperwork        14280            0        14280            1            0                         [2, 3]                             []
+     2                     call-contractor            4        14280        14284            1       215898                            [4]                            [1]
+     3                          clean-yard       215902        14280       230182            3            0                            [4]                            [1]
+     4                    build-foundation        32134       230182       262316            2            0                      [5, 6, 7]                         [2, 3]
+     5                  build-wall-support        41232       262316       303548            4        60449                     [8, 9, 11]                            [4]
+     6               lay-electrical-cables          142       262316       262458            1            0                             []                            [4]
+     7                    call-electrician           15       262316       262331            1       101666                            [8]                            [4]
+     9                         build-walls         6127       303548       309675            4       119676                       [10, 13]                            [5]
+    11                        build-stairs         4325       303548       307873            2            0                           [12]                            [5]
+    10                            add-gate        54322       309675       363997            3            0                            [8]                            [9]
+    12                       add-2nd-floor       121478       307873       429351            4            0                           [13]                           [11]
+     8      install-electrical-gate-opener        41245       363997       405242            2            0                             []                     [5, 7, 10]
+    13                        isolate-room         1242       429351       430593            3            0                           [14]                        [12, 9]
+    14                  furnish-appartment        54320       430593       484913            2            0                             []                           [13]
+
+Time:
+0
+	Starting: 1
+	Current Staff: 1
+Time:
+14280
+	Finished: 1
+	Starting: 2
+	Starting: 3
+	Current Staff: 4
+Time:
+14284
+	Finished: 2
+	Current Staff: 3
+Time:
+230182
+	Finished: 3
+	Starting: 4
+	Current Staff: 2
+Time:
+262316
+	Finished: 4
+	Starting: 5
+	Starting: 6
+	Starting: 7
+	Current Staff: 6
+Time:
+262331
+	Finished: 7
+	Current Staff: 5
+Time:
+262458
+	Finished: 6
+	Current Staff: 4
+Time:
+303548
+	Finished: 5
+	Starting: 9
+	Starting: 11
+	Current Staff: 6
+Time:
+307873
+	Finished: 11
+	Starting: 12
+	Current Staff: 8
+Time:
+309675
+	Finished: 9
+	Starting: 10
+	Current Staff: 7
+Time:
+363997
+	Finished: 10
+	Starting: 8
+	Current Staff: 6
+Time:
+405242
+	Finished: 8
+	Current Staff: 4
+Time:
+429351
+	Finished: 12
+	Starting: 13
+	Current Staff: 3
+Time:
+430593
+	Finished: 13
+	Starting: 14
+	Current Staff: 2
+Time:
+484913
+	Finished: 14
+	Current Staff: 0
+
+*** Shortest possible project execution is 484913 ***

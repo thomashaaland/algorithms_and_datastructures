@@ -1,0 +1,25 @@
+class TreeMain {
+    public static void main(String[] args) {
+	BinarySearchTree<Integer> tree = new BinarySearchTree<>();
+
+	for (int i = 3; i > 0; i--) {
+	    tree.insert(i);
+	}
+
+	tree.delete(1);
+	System.out.println(tree);
+
+	
+	
+	AVLTree<Integer> avlTree = new AVLTree<>();
+
+	for (int i = 10; i > 0; i--) {
+	    avlTree.insert(i);
+	}
+
+	avlTree.delete(10);
+
+	System.out.print(avlTree);
+	
+    }
+}

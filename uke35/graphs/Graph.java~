@@ -1,0 +1,300 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Stack;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+
+class Graph<T> {
+
+    private class Node {
+	T data;
+	Integer weight;
+
+	public Node(T i, Integer weight) {
+	    data = i;
+	    this.weight = weight;
+	}
+
+	public Node(T i) {
+	    data = i;
+	    weight = 1;
+	}
+    }
+
+    public class Edge implements Comparable<Edge> {
+	Integer to;
+	Integer weight;
+
+	public Edge(Integer to) {
+	    this.to = to;
+	    weight = 1;
+	}
+
+	public Edge(Integer to, Integer weight) {
+	    this.to = to;
+	    this.weight = weight;
+	}
+
+	@Override
+	public int compareTo(Edge edge) {
+	    if (this.weight < edge.weight) return -1;
+	    else if (this.weight == edge.weight) return 0;
+	    else return 1;
+	}
+	    
+
+	@Override
+	public String toString() {
+	    return "(" + to + ", " + weight + ")";
+	}
+    }
+    
+    // neighbor stores the edges
+    private HashMap<Integer, ArrayList<Edge> > neighbor;
+    // Nodes stores the nodes
+    private HashMap<Integer, Node > nodes;
+    
+    public Graph() {
+	neighbor = new HashMap<>();
+	nodes = new HashMap<>();
+    }
+
+    public void addNode(Integer i, T data) {
+	neighbor.put(i, new ArrayList<>());
+	nodes.put(i, new Node(data));
+    }
+
+    public void addEdge(Integer from, Integer to) {
+	neighbor.get(from).add(new Edge(to));
+    }
+
+    //public void addEdge(Integer from, Integer to, Integer weight) {
+    //neighbor.get(from).add(new Edge(to, from, weight));
+    //}
+
+    public void add2WEdge(Integer from, Integer to) {
+	addEdge(from, to);
+	addEdge(to, from);
+    }
+
+    public Set<Integer> getNodes() {
+	return neighbor.keySet();
+    }
+
+    public ArrayList<Edge> getEdges(Integer i) {
+	return neighbor.get(i);
+    }
+
+    public T getData(Integer i) {
+	return nodes.get(i).data;
+    }
+
+
+    // DEPTH SEARCH
+    public String depthSearch() {
+	Stack<Integer> visited = new Stack<>();
+	for (Integer node : getNodes()) {
+	    DFS(node, visited);
+	}
+	return visited.toString();
+    }
+
+    private boolean isContainedIn(Integer a, List<Integer> b) {
+    	for (Integer element : b) {
+    	    if (a == element) return true;
+    	}
+    	return false;
+    }
+
+    private boolean isContainedInEdge(Integer a, List<Edge> b) {
+	for (Edge element : b) {
+	    if (a == element.to) return true;
+	}
+	return false;
+    }
+
+    
+    private void DFS(Integer current, Stack<Integer> visited) {
+	if (!isContainedIn(current, visited))
+	    visited.push(current);
+	for (Edge edge : getEdges(current)) {
+	    if (!isContainedIn(edge.to, visited)) {
+		DFS(edge.to, visited);
+	    }
+	}
+    }
+
+    // BROAD SEARCH
+    public String breadthSearch() {
+	Stack<Integer> visited = new Stack<>();
+	LinkedList<Integer> L = new LinkedList<>();
+	Integer current;
+	L.add(6);
+	while (L.size() > 0) {
+	    current = L.removeFirst();
+	    visited.push(current);
+	    
+	    for (Edge edge : getEdges(current)) {
+		if (!isContainedIn(edge.to, visited) && !isContainedIn(edge.to, L))
+		    L.add(edge.to);
+	    }
+	}
+	return visited.toString();
+    }
+
+    // Topologisk Sortering
+
+    // Finds the number of edges pointing to this node
+    private Integer degIn(Integer node) {
+	Integer nCount = 0;
+	for (ArrayList<Edge> edges : neighbor.values())
+	    if (isContainedInEdge(node, edges)) nCount += 1;
+	return nCount;
+    }
+
+    // Topological sorting algorithm
+    public String topologicalSort() {
+
+	// Create an empty Stack
+    	Stack<Integer> S = new Stack<>();
+
+	// Create the outputlist
+	ArrayList<Integer> output = new ArrayList<>();
+
+	// Create a HashMap for holding all the indegrees for all nodes.
+	HashMap<Integer, Integer> inCount = new HashMap<>();
+
+	// Check each node to see if any other nodes points to them.
+	// If no nodes point to them, remove them from the nodequeue and save them in S
+	for (Integer node : neighbor.keySet()) {
+	    inCount.put(node, degIn(node));
+	    if (inCount.get(node) == 0) S.push(node);
+	}
+	
+	// Do rest
+	int i = 1;
+	while (S.size() > 0) {
+	    Integer node = S.pop();
+	    output.add(node);
+	    i += 1;
+	    for (Edge edge : getEdges(node)) {
+		inCount.put(edge.to, inCount.get(edge.to) - 1);
+		if (inCount.get(edge.to) == 0) {
+		    S.push(edge.to);
+		}
+	    }
+	}
+	
+	if (i > neighbor.size()) return output.toString();
+	return "G has a cycle: " + i + " " + neighbor.size();
+    }
+
+    // Check to see if this graph has an eulercircuit
+    // Runs in O(n**2)
+    public boolean hasEulerCircuit() {
+	for (Integer node : neighbor.keySet()) {
+	    //System.out.println(node + " " + getEdges(node).size() + " " + degIn(node));
+	    if (getEdges(node).size() != degIn(node))
+		return false;
+	}
+	return true;
+    }
+
+    // Hamiltonian circuit
+    public boolean hasHamiltonianCircuit() {
+    	Stack<Integer> visited;
+	Integer solutions;
+	for (Integer node : getNodes()) {
+	    visited = new Stack<>();
+	    solutions = 0;
+    	    solutions = hamDFS(node, node, visited);
+	    if (solutions > 0) return true;
+	}
+    	return false;
+    }
+
+    private Integer hamDFS(Integer start, Integer current, Stack<Integer> visited) {
+	if (start == current && visited.size() == neighbor.size()) return 1;
+	if (!isContainedIn(current, visited)) {
+	    visited.push(current);
+	    // run through all edges in current node
+	    for (Edge edge : getEdges(current)) {
+		// Copy visited into visitedCopy
+		Stack<Integer> visitedCopy = new Stack<>();
+		for (Integer node : visited) visitedCopy.push(node);
+		if (hamDFS(start, edge.to, visitedCopy) > 0) return 1;
+	    }
+	}
+	return 0;
+    }
+
+    // public HashMap<Integer, Integer> dijkstra(Integer s) {
+    // 	PriorityQueue<Edge> Q = new PriorityQueue<>();
+    // 	HashMap<Integer, Integer> D = new HashMap<>();
+    // 	for (Integer v : neighbor.keySet()) {
+    // 	    D.put(v, 10000);
+    // 	    Q.add(new Edge(v, D.get(v)));
+    // 	}
+    // 	D.put(s, 0);
+    // 	while(Q.size() > 0) {
+    // 	    Edge v = Q.poll();
+    // 	    for (Edge t : neighbor.get(v)) {
+    // 		if (D.get(t.to) > D.get(v) + t.weight) {
+    // 		    D.put(t.to, D.get(v) + t.weight);
+		    
+    // 		}
+    // 	    }
+    // 	}
+    // 	return new HashMap<>();
+    // }
+
+    // public Graph<String> prim() {
+    // 	HashMap<Integer, Integer> D = new HashMap<>();
+    // 	ArrayList<Integer> nodes = new ArrayList<>((neighbor.keySet()));
+    // 	D.put(nodes.remove(0), 0);
+    // 	Graph<String> T = new Graph<>(); // outputtree
+
+    // 	class Triplet implements Comparable<Triplet> {
+    // 	    Integer node;
+    // 	    Edge edge;
+    // 	    Integer dist;
+
+    // 	    public Triplet(Integer node, Edge edge, Integer dist) {
+    // 		this.node = node;
+    // 		this.edge = edge;
+    // 		this.dist = dist;
+    // 	    }
+
+    // 	    @Override
+    // 	    public int compareTo(Triplet triplet) {
+    // 		if (this.dist < triplet.dist) return -1;
+    // 		else if (this.dist == triplet.dist) return 0;
+    // 		else return 1;
+    // 	    }
+    // 	}
+	
+    // 	PriorityQueue<Triplet> Q = new PriorityQueue<>(); // heap
+    // 	for (Integer u : nodes) {
+    // 	    D.put(u, 1000000);
+    // 	    Q.add(new Triplet(u, null, D.get(u)));
+    // 	}
+    // 	while (Q.size > 0) {
+    // 	    Triplet temp = Q.poll();
+    // 	    T.addNode(temp.node);
+    // 	    T.addEdge(temp.node, temp.edge);
+		
+    // 	return T;
+    // }
+    
+    @Override
+    public String toString() {
+	String out = ""; 
+	for (Integer node : neighbor.keySet()) {
+	    out += node + " :--> " + getEdges(node) + '\n';
+	}
+	return out;
+    }
+    
+}

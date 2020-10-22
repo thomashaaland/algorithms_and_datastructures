@@ -1,0 +1,51 @@
+    ID                            Taskname    Task time   Start time     End time        Staff        Slack                       OutEdges                        InEdges
+     1                                   1            3            0            3            4            2                            [3]                             []
+     2                                   2            5            0            5            2            0                         [3, 4]                             []
+     3                                   3            1            5            6            2            1                         [5, 6]                         [1, 2]
+     4                                   4            2            5            7            4            0                            [6]                            [2]
+     5                                   5            4            6           10            3            5                            [7]                            [3]
+     6                                   6            8            7           15            4            0                         [7, 8]                         [3, 4]
+     7                                   7            3           15           18            2            0                             []                         [5, 6]
+     8                                   8            1           15           16            3            0                             []                            [6]
+
+Time:
+0
+	Starting: 1
+	Starting: 2
+	Current Staff: 6
+Time:
+3
+	Finished: 1
+	Current Staff: 2
+Time:
+5
+	Finished: 2
+	Starting: 3
+	Starting: 4
+	Current Staff: 6
+Time:
+6
+	Finished: 3
+	Starting: 5
+	Current Staff: 7
+Time:
+7
+	Finished: 4
+	Starting: 6
+	Current Staff: 7
+Time:
+10
+	Finished: 5
+	Current Staff: 4
+Time:
+15
+	Finished: 6
+	Starting: 7
+	Starting: 8
+	Current Staff: 5
+Time:
+16
+	Finished: 8
+	Current Staff: 2
+
+*** Shortest possible project execution is 16 ***

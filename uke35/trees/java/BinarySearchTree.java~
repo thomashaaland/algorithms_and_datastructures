@@ -1,0 +1,231 @@
+import java.util.concurrent.TimeUnit;
+
+public class BinarySearchTree<T extends Comparable<T> > implements Tree <T> {
+    // Basic building block is the Node
+    protected class Node {
+	T key;
+	Node parent;
+	Node left;
+	Node right;
+	Node(Node parent, T key) {
+	    this.key = key;
+	    this.parent = parent;
+	    left = null;
+	    right = null;
+	}
+
+	boolean isExternal() {
+	    return (left == null & right == null);
+	}
+
+	boolean isInternal() {
+	    return !this.isExternal();
+	}
+	
+	boolean isRoot() {
+	    return parent == null;
+	}
+    }
+
+    Node root;
+
+    // Constructor:
+    // Starts empty.
+    public BinarySearchTree() {
+	root = null;
+    }
+
+    // Procedure:
+    // Check root node. If it is empty, create a new node with key.
+    // If not empty, check children.
+    // Go right if node < key
+    // Go left if node > key
+    @Override
+    public void insert(T key) {
+	if (root == null)
+	    root = new Node(null, key);
+	else
+	    insertRecursive(key, root);
+    }
+
+    // inserts recursively. works the same way as insert
+    protected void insertRecursive(T key, Node current) {
+	if (key.compareTo(current.key) >= 0) {
+	    if (current.right == null)
+		current.right = new Node(current, key);
+	    else
+		insertRecursive(key, current.right);
+	}
+	else {
+	    if (current.left == null)
+		current.left = new Node(current, key);
+	    else
+		insertRecursive(key, current.left);
+	}
+    }
+
+    @Override
+    public void delete(T key) {
+	remove(root, key);
+    }
+
+    protected Node remove(Node node, T key) {
+	if (node == null)
+	    return null;
+	if (key.compareTo(node.key) < 0)
+	    node.left = remove(node.left, key);
+	else if (key.compareTo(node.key) > 0)
+	    node.right = remove(node.right, key);
+	else if (node.left == null)
+	    node = node.right;
+	else if (node.right == null)
+	    node = node.left;
+	else {
+	    Node tNode = findMin(node.right);
+	    node.key = tNode.key;
+	    node.right = remove(node.right, tNode.key);
+	}
+	return node;
+    }
+
+    @Override
+    public int depth(T key) {
+	Node target = this.find(key);
+	return (target == null) ? -1 : depthRecursive(target);
+    }
+
+    protected int depthRecursive(Node node) {
+	return node.isRoot() ? 0 : 1 + depthRecursive(node.parent);
+    }
+    
+    // Finds key and returns the node
+    // Checks the root, if not there, checks children
+    protected Node find(T key) {
+	Node foundNode = findRecursive(key, root);
+	//foundNode = findIterative(key, root);
+
+	return foundNode;
+    }
+
+    protected Node findRecursive(T key, Node current) {
+	if (current == null)
+	    return null;
+	else if (key.compareTo(current.key) == 0)
+	    return current;
+	else if (key.compareTo(current.key) > 0)
+	    return findRecursive(key, current.right);
+	else
+	    return findRecursive(key, current.left);
+    }
+
+    // Method belonging to tree to check if selected node is external
+    protected boolean thisIsExternalNode(Node current) {
+	if (current == null)
+	    return true;
+	else 
+	    return (current.left == null & current.right == null);
+    }
+
+    // iterative find method
+    protected Node findIterative(T key, Node current) {
+	Node v = current;
+	while (!this.thisIsExternalNode(v)) {
+	    if (key.compareTo(v.key) == 0)
+		return v;
+	    else if (key.compareTo(v.key) < 0)
+		v = v.left;
+	    else
+		v = v.right;
+	}
+	return v;
+    }
+
+    // Exists method checks if a key exists in the tree.
+    @Override
+    public boolean exists(T key) {
+	return (find(key) != null);
+    }
+
+    // Method for finding depth of tree
+    @Override
+    public int longestPath() {
+	return longestRecursive(root, -1);
+    }
+
+    protected int longestRecursive(Node current, int n) {
+	if (current == null) return n;
+	else
+	    return Math.max(longestRecursive(current.left, n + 1),
+			    longestRecursive(current.right, n + 1));
+    }
+
+    @Override
+    public int shortestPath() {
+	return shortestRecursive(root, -1);
+    }
+
+    protected int shortestRecursive(Node current, int n) {
+	if (current == null) return n;
+	else
+	    return Math.min(shortestRecursive(current.left, n + 1),
+			    shortestRecursive(current.right, n + 1));
+    }
+
+    // Method for finding the smallest element
+    @Override
+    public T findSmallestElement() {
+	Node smallest = (root == null) ? null :
+	    findMin(root);
+	return (smallest == null) ? null : smallest.key;
+	//return smallestElementRecursive(root).key;
+    }
+
+    // method for finding smallest node compared between two nodes.
+    protected Node minNode(Node a, Node b) {
+	return (a.key.compareTo(b.key) < 0) ? a : b;
+    }
+
+    // method for finding largest node compared between two nodes.
+    protected Node maxNode(Node a, Node b) {
+	return (a.key.compareTo(b.key) < 0) ? b : a;
+    }
+
+    // recursive method for finding the smallest element.
+    protected Node findMin(Node current) {
+	return (current.left == null) ? current :
+	    findMin(current.left);
+    }
+
+    // method for finding largest element
+    @Override
+    public T findLargestElement() {
+	Node largest = (root == null) ? null :
+	    findMax(root);
+	return (largest == null) ? null : largest.key;
+    }
+
+    protected Node findMax(Node current) {
+	return (current.right == null) ? current :
+	    findMax(current.right);
+    }
+
+    @Override
+    public String toString() {
+	return this.printExpression(root);
+    }
+
+    protected String printExpression(Node node) {
+	if (this.thisIsExternalNode(node)) {
+	    return "" + ((node != null) ? node.key + " ": "");
+	}
+	else {
+	    return "(" + printExpression(node.left) +
+		"" + node.key + " " +
+		printExpression(node.right) + ")";
+	}
+    }
+
+    // Tree transversals
+    
+    
+}
