@@ -16,8 +16,10 @@ class TestSort {
 	BubbleSort bubbleSort = new BubbleSort(unsorted);
 	InsertionSort insertionSort = new InsertionSort(unsorted);
 	HeapSort heapSort = new HeapSort(unsorted);
+	MergeSort mergeSort = new MergeSort(unsorted);
+	QuickSort quickSort = new QuickSort(unsorted);
 	
-	// int[] hs = heapSort.getArr();
+	// int[] hs = quickSort.getArr();
 	// for (int i = 0; i < n; i++) {
 	//     System.out.print(hs[i] + " ");
 	// }
@@ -26,5 +28,7 @@ class TestSort {
 	System.out.println("SelectionSort runtume: " + selectionSort.getRunTime());
 	System.out.println("InsertionSort runtume: " + insertionSort.getRunTime());
 	System.out.println("HeapSort runtume:      " + heapSort.getRunTime());
+	System.out.println("MergeSort runtume:     " + mergeSort.getRunTime());
+	System.out.println("QuickSort runtume:     " + quickSort.getRunTime());
     }
 }
